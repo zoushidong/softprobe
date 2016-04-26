@@ -1,0 +1,4 @@
+*.pyc
+server/*.pyc
+server/jobs.sqlite
+server/nohup.out
