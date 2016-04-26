@@ -1,0 +1,100 @@
+//send to the probe
+//for run task
+{
+	"taskId":"0001",
+	"clientId":"1234-5678",
+	"optype":"ping",
+	"destination":"www.baidu.com",
+	"timeout":20,
+	"options":{
+		"count":3,
+		"size":30
+	},
+	"threshold":100
+}
+//for stop task
+{
+	"type":"stop",
+	"taskId":"0001",
+	"clientId":"1234-5678",
+}
+//for give clientId
+{
+	"type":"yourId",
+	"content":"1234-5678",
+}
+
+//send to probe
+//for change version 
+{
+	"type":"version",
+	"optype" : "changeTo | current | revert ｜ update",
+	"versionName":"",
+	"destination" : ""
+}
+
+//to server
+{
+	"type" : "version",
+	"op"   : "the operation type",
+	"status" : "success | fail ",
+	"data" : "",
+	"currentVersion" : "version code"
+}
+
+//send to the server
+//for heartbeat
+{
+	"type":"heartbeat",
+	"clientId":"1234-5678",
+	"content":
+	{
+		"memory":8.7,
+		"ipaddress":"10.0.2.15",
+		"cpu":0.2,
+		"macaddress":"",
+		"bytesSent":1.0,
+		"bytesRecv":1.0,
+		"netmask":"",
+		"arpNeibors":[
+			{
+				"ip":"",
+				"mac":"",
+				"interface":"",
+			}
+		]
+	}
+}
+//for ping
+{
+	"status":"success",
+	"optype":"ping",
+	"startTime":"22222",
+	"endTime":"",
+	"clientId":"",
+	"taskId":"",
+	"tot_fragment":"",
+	"fragment":"",
+	"probeId":"",
+	"result":
+	{
+		"rtt":2.3,
+		"packet loss":55
+	}
+}
+//for iperf-c
+{
+	"status":"success",
+	"optype":"iperf-c",
+	"startTime":"22222",
+	"endTime":"",
+	"clientId":"",
+	"taskId":"",
+	"tot_fragment":"",
+	"fragment":"",
+	"serverId":"",
+	"result":
+	{
+		"bandwidth":"30 Mbits/sec"
+	}
+}

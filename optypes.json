@@ -1,0 +1,65 @@
+{
+	"ping":
+	{
+		"cmd":"ping",
+		"options":
+		{
+			"count":{"type":"int","required":true,"default":5,"option":"-c"},
+			"size" :{"type":"int","required":false,"default":45,"option":"-s"}
+		},
+		"valueExtractor":
+		{
+			"packet loss":"([0-9]+)% packet loss",
+			"rtt":"min/avg.+ = [0-9]+[.][0-9]+/([0-9]+[.][0-9]+)"		
+		}
+	},
+	"iperf-s":
+	{
+		"cmd":"iperf",
+		"options":
+		{
+			"server":{"type":"int","required":true,"default":5001,"option":"-s"}
+		}
+	},
+	"iperf-c":
+	{
+		"cmd":"/usr/local/bin/iperf",
+		"options":
+		{
+			"client":{"type":"unicode","required":true,"default":"localhost","option":"-c","order":0},
+			"time":{"type":"int","required":true,"default":5,"option":"-t"},
+			"measure":{"type":"unicode","required":true,"default":"m","option":"-f"},
+			"protocol":{"type":"unicode","required":true,"default":"","option":" ","order":1},
+			"band":{"type":"unicode","required":false,"default":"100M","option":"-b","order":2},
+			"thread":{"type":"int","required":true,"default":"1","option":"-P"},
+			"len":{"type":"int","required":false,"default":" ","option":"-l"}
+		},
+		"valueExtractor":
+		{
+			"bandwidth-tcp":"\\[  \\d*\\].* ([0-9]+[.]?[0-9]*) Mbits/sec",
+			"bandwidth-udp":"\\[  \\d*\\].* ([0-9]+[.]?[0-9]*) Mbits/sec .*%"
+		}
+
+	},
+	"curl":
+	{
+  		"cmd":"curl",
+  		"options":
+  		{
+    		"output":{"type":"unicode","required":true,"default":"/dev/null","option":"-o"},
+    		"s":{"type":"unicode","required":true,"default":" ","option":"-s"},
+    		"time":{"type":"unicode","required":true,"default":" 'time_connect %{time_connect} time_starttransfer %{time_starttransfer} time_redirect %{time_redirect} time_namelookup %{time_namelookup} time_total %{time_total} speed_download %{speed_download}' ","option":"-w"}
+        },
+  		"valueExtractor":
+  		{
+    		
+    		"time_connect":"time_connect ([0-9]+[.][0-9]+)",
+    		"time_starttransfer":"time_starttransfer ([0-9]+[.][0-9]+)",
+    		"time_redirect":"time_redirect ([0-9]+[.][0-9]+)",
+    		"time_namelookup":"time_namelookup ([0-9]+[.][0-9]+)",
+    		"time_total":"time_total ([0-9]+[.][0-9]+)",
+    		"speed_download":"speed_download ([0-9]+[.][0-9]+)"
+	    }
+     }
+	
+}

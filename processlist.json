@@ -1,0 +1,15 @@
+{
+	"connectionHandler":
+	{
+		"package":"loop",
+		"function":"operate_conn",
+		"args":[{"type":"variable","value":"SERVER_ADDR"}],
+		"need_pipe" : true
+	},
+	"rebooter":{
+		"package":"rebooter",
+		"function":"operate_conn",
+		"args":[],
+		"need_pipe" : false
+	}
+}

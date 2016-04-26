@@ -1,0 +1,9 @@
+{
+	"taskId":"0001",
+	"destinationId":"5678-1234",
+	"clientId":"1234-5678",
+	"optype":"iperf-s",
+	"destination":"",
+	"options":{
+		}
+}

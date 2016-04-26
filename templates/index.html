@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="{{ static_url('bootstrap.min.css') }}">
+</head>
+<body>
+	<form class="form-horizontal">
+    <fieldset>
+      <div id="legend" class="">
+        <legend class="">表单名</legend>
+      </div>
+    <div class="control-group">
+
+          <!-- Select Basic -->
+          <label class="control-label">目标探针</label>
+          <div class="controls">
+            <select id="workerSelector" class="input-xlarge">
+      			
+      		  </select>
+          </div>
+
+        </div>
+
+    <div class="control-group">
+
+          <!-- Text input-->
+          <label class="control-label" for="input01">探测目标</label>
+          <div class="controls">
+            <input name="destination" type="text" placeholder="请输入探测目标地址" class="input-xlarge">
+            <p class="help-block"></p>
+          </div>
+        </div>
+
+    <div class="control-group">
+
+          <!-- Select Basic -->
+          <label class="control-label">探测任务</label>
+          <div class="controls">
+            <select name="types" class="input-xlarge">
+              <option value="ping">Ping</option>
+            </select>
+          </div>
+
+        </div>
+
+    <div class="control-group">
+
+          <!-- Text input-->
+          <label class="control-label" for="input01">发包数</label>
+          <div class="controls">
+            <input name="count" type="text" placeholder="请输入发包的数量" class="input-xlarge">
+            <p class="help-block"></p>
+          </div>
+        </div>
+
+    <div class="control-group">
+
+          <!-- Text input-->
+          <label class="control-label" for="input01">包大小</label>
+          <div class="controls">
+            <input name="size" type="text" placeholder="请输入每个数据包的大小" class="input-xlarge">
+            <p class="help-block"></p>
+          </div>
+        </div>
+
+    
+
+    
+
+    <div class="control-group">
+          <label class="control-label"></label>
+
+          <!-- Button -->
+          <div class="controls">
+            <button id="submitBtn" class="btn btn-primary">确定</button>
+          </div>
+        </div>
+
+    </fieldset>
+  </form>
+
+  <div id="results">
+    
+  </div>
+
+<script src="{{ static_url('jquery.js') }}"></script>
+<script src="{{ static_url('bootstrap.min.js') }}"></script>
+<script>
+	var wsClient = new WebSocket('ws://localhost:8000/client');
+  var workers = [];
+  var clientId ;
+
+  function onTaskFinished(result)
+  {
+      var result = $("<pre></pre>").text(JSON.stringify(result,null,4));
+      $("#results").append(result);
+  }
+	wsClient.onmessage = function(msg)
+	{
+		console.log(msg);
+    msg = JSON.parse(msg.data);
+    if(msg.type == 'workers'){
+        workers = msg.content;
+        if (workers.length>0) {
+            for (x in workers)
+            {
+                $("#workerSelector").append($("<option>"+workers[x]+"</option>").val(workers[x]));
+            }
+        };
+    }
+    else if(msg.type == 'newWorker')
+    {
+        var newWorker = msg.content;
+        if (workers.indexOf(newWorker)<0) {
+            workers.push(newWorker);
+            $("#workerSelector").append($("<option>"+newWorker+"</option>").val(newWorker));
+        };
+    }
+    else if(msg.type == 'clientId')
+    {
+        clientId = msg.content;
+    }
+    else if (msg.type == 'taskFinished')
+    {
+        onTaskFinished(msg.content);
+    }
+	}
+
+
+  wsClient.onerror = function(err){
+    console.log(err);
+  }
+
+  wsClient.onClose = function(event)
+  {
+      console.log(event);
+  }
+
+  function sendData(msg)
+  {
+     msg = JSON.stringify(msg);
+     console.log(msg);
+     wsClient.send(msg);
+  }
+
+  $(document).ready(function(){
+      $('#submitBtn').click(function(e){
+          e.preventDefault();
+          var woker = $('#workerSelector').val();
+          var destination = $("input[name='destination']").val();
+          var optype = $('select[name="types"]').val();
+          var count = parseInt($('input[name="count"]').val());
+          var size = parseInt($('input[name="size"]').val());
+          var msg = {
+            destinationId : woker,
+            clientId : clientId,
+            optype : optype,
+            destination : destination,
+            options : {
+              count : count,
+              size :size
+            }
+          };
+          sendData(msg);
+      });
+  })
+	
+</script>
+</body>
+</html>
