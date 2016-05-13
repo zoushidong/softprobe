@@ -179,6 +179,7 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 
 	def onMessage(self,payload,isBinary):
 		task = json.loads(payload)
+		print task
 		if task.get('type') == 'yourId':
 			if task['content'] : 
 				self.id = task['content']['id']
@@ -196,7 +197,7 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 		elif task.get('type') == 'reboot' : 
 			print 'reboot now'
 			sendInfoToPipe(task)
-
+		
 		elif 'optype' in task: 
 			print task
 			d = threads.deferToThread(executeTask,task)
@@ -207,6 +208,17 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 			if task.get('taskRecordId'):
 				# print task['taskRecordId']
 				self.terminate(task['taskRecordId'])
+		elif task.get('type') == 'revertSSH' :
+			print 'revertSSH'
+			if reverseSSH(config.REMOTE_DEFAULT_REVERSE_PORT,config.REMOTE_SERVER_IP,config.REMOTE_KEY_PATH):
+				feedback('success',True)
+			else:
+				feedback('fail',True)
+		elif task.get('type') == 'killrevertSSH':
+			if killReverseSSH():
+				feedback('success',True)
+			else:
+				feedback('fail',True)
 
 	def onOpen(self):
 		self.needReconnection = False
