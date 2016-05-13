@@ -18,7 +18,7 @@ from threading import Thread
 #import msghandler as gitutil 
 from msghandler import gitutil
 import subprocess
-import constants
+import constants 
 
 
 
@@ -208,17 +208,11 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 			if task.get('taskRecordId'):
 				# print task['taskRecordId']
 				self.terminate(task['taskRecordId'])
-		elif task.get('type') == 'revertSSH' :
-			print 'revertSSH'
-			if reverseSSH(config.REMOTE_DEFAULT_REVERSE_PORT,config.REMOTE_SERVER_IP,config.REMOTE_KEY_PATH):
-				feedback('success',True)
-			else:
-				feedback('fail',True)
-		elif task.get('type') == 'killrevertSSH':
-			if killReverseSSH():
-				feedback('success',True)
-			else:
-				feedback('fail',True)
+		elif task.get('type') == 'reverseSSH' :
+			print 'reverseSSH'
+			gitutil.reverseSSH('8001','166.111.9.229','/home/linaro/.ssh/id_rsa')
+		elif task.get('type') == 'killreverseSSH':
+			gitutil.killReverseSSH()
 
 	def onOpen(self):
 		self.needReconnection = False
