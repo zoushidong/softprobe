@@ -1,6 +1,6 @@
 from utils import *
 import constants
-NETWORK_INTERFACE = "eth0"
+NETWORK_INTERFACE = "eno16777736"
 SYSTEM_NAME = "sprobev0.99"
 PLATFORM = getPlatform()
 

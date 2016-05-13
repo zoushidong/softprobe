@@ -98,7 +98,25 @@ def scp(remote,dest,keypath) :
 		return False
 	return True
 
-
+def reverseSSH(port,server,keypath,user='root'):
+	cmd = "ssh -NfR %s:localhost:22 %s@%s -i %s"%(port,user,server,keypath)
+	cmd = shlex.split(cmd)
+	sub = subprocess.Popen(cmd,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	returncode = sub.wait()
+	print returncode
+	if returncode : 
+		return False
+	return True
+	
+def killReverseSSH():
+	cmd = "ps -ef | grep 'ssh -NfR' | awk '{print $2}' | xargs kill -9"
+	cmd = shlex.split(cmd)
+	sub = subprocess.Popen(cmd,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	returncode = sub.wait()
+	print returncode
+	if returncode : 
+		return False
+	return True
 @repo
 def changeToVersion(repo,oid):
 	repo.reset(oid,GIT_RESET_HARD)

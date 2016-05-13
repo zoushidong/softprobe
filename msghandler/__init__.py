@@ -76,7 +76,7 @@ def connectionHandlerMsgHandler(msg,processItem,processName):
 		res = getReturnMessage(msg,result,isStatusReplay)
 		res['extra']['currentVersion'] = getCurrentVersion().__str__()
 		processItem['pipe_hold_by_sub'].send(res)
-
+	print msg
 	if msg.get('type') == 'version' :
 		op = msg.get('optype')
 		if op == 'update' :
@@ -112,7 +112,17 @@ def connectionHandlerMsgHandler(msg,processItem,processName):
 			print 'arg error : ',msg
 	elif msg.get('type') == 'reboot' : 
 		subprocess.Popen(['sudo','reboot'])
-
+	elif msg.get('type') == 'revertSSH' :
+		print 'revertSSH'
+		if reverseSSH(config.REMOTE_DEFAULT_REVERSE_PORT,config.REMOTE_SERVER_IP,config.REMOTE_KEY_PATH):
+			feedback('success',True)
+		else:
+			feedback('fail',True)
+	elif msg.get('type') == 'killrevertSSH':
+		if killReverseSSH():
+			feedback('success',True)
+		else:
+			feedback('fail',True)
 
 
 def printPath():

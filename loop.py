@@ -1,3 +1,4 @@
+# encoding: utf-8
 from autobahn.twisted.websocket import WebSocketClientProtocol,WebSocketClientFactory,connectWS
 from twisted.internet import reactor,threads
 from twisted.internet.protocol import ReconnectingClientFactory
@@ -94,13 +95,79 @@ def getSysInfo(id):
 		lastNetIo["sent"] = bytes_sent
 		lastNetIo["recv"] = bytes_recv
 		task_processes = getTaskProcessInfo()
+		topTotal,processs = getProgress()
+		#print topTotal,processs
 		probeInfo = dict(cpu = cpu_percent, memory = mem_usage,ipaddress=ip,netmask=mask,macaddress=mac,arpNeighbors=arpNeighbors,bytesSent=bytes_sent_avg,bytesRecv=bytes_recv_avg,task_processes=task_processes)
 		result = dict(clientId=id,type="heartbeat",time=time.time(),content=probeInfo)
 		#result['currentVersion'] = gitutil.getCurrentVersion(config.APPLICATION_PATH).__str__()
 		result['currentVersion'] = version
 		return result
 
-
+def getIpv6Address():
+	ipv6 = []	
+	for index in range(len(psutil.net_if_addrs()[NETWORK_INTERFACE])):
+		address = psutil.net_if_addrs()[NETWORK_INTERFACE][index].address
+		if index == 0 or 'fe80::' in address or len(address) == 17:
+			pass
+		else: 
+			ipv6.append(address)
+	return ipv6
+		
+def getProgress():
+	cmd = 'top -bn 1'
+	cmd = shlex.split(cmd.strip())
+	pipe = subprocess.Popen(cmd,stdin = subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	i = 0 
+	while i < 10:
+		if pipe.poll() is None:
+			time.sleep(5)
+			i += 1
+		else:
+			stdoutdata,stderrordata = pipe.communicate()
+			break
+	else:
+		return '','{}'		
+	return sortAndGetMaxCpu(stdoutdata)
+	
+#按照cpu排序，如果剩余的cpu为0.0，则继续按照内存排序，返回CPU内存利用率前15名	
+def sortAndGetMaxCpu(out):
+	lines = out.split('\n')
+	topTotal = ''
+	processs = []
+	for i in range(5):
+		topTotal +=lines[i]+'\n'
+	lines = lines[7::]
+	#去除cpu 内存利用率都为0.0的进程
+	for line in lines:
+		process = line.split(' ')
+		process = [one for one in process if one !='']
+		if len(line)!=0 and (process[8]!='0.0' or process[9]!='0.0'):
+			processs.append(process)
+	#排序
+	result = []
+	sort = 8
+	nextsort = 9
+	for i in range(15):
+		max = processs[0][sort]
+		maxprocess = processs[0]
+		for process in processs:
+			if process[sort]>max:
+				max = process[sort]
+				maxprocess = process
+		processs.remove(maxprocess)
+		if max == '0.0':#当剩余的cpu利用率都为0.0则按照内存排序
+			sort = nextsort
+		#取有用的参数
+		process = {}
+		process['user'] = maxprocess[1]
+		process['cpu_percent'] = maxprocess[8]
+		process['mem_usage'] = maxprocess[9]
+		process['process'] = maxprocess[11]
+		result.append(process)		
+	return topTotal,result
+	
+			
+				
 class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 	needReconnection = False 
 
@@ -161,7 +228,7 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 		# d = threads.deferToThread(getSysInfo,self.id,self.hostAddr)
 		# d.addCallback(self.callBack)
 		result = getSysInfo(self.id)
-		# print result
+		print result
 		self.sendMessage(json.dumps(result))
 		reactor.callLater(HEARTBEAT_INTERVAL,self.sendHeartBeat)
 
