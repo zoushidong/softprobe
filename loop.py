@@ -197,8 +197,8 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 
 		elif task.get('type') == 'reboot' : 
 			print 'reboot now'
-			sendInfoToPipe(task)
-		
+			#sendInfoToPipe(task)
+			gitutil.reboot()
 		elif 'optype' in task: 
 			print task
 			d = threads.deferToThread(executeTask,task)

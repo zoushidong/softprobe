@@ -94,10 +94,19 @@ def scp(remote,dest,keypath) :
 	cmd = shlex.split(cmd)
 	sub = subprocess.Popen(cmd,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	returncode = sub.wait()
-	if returncode : 
+	if returncode !=0: 
 		return False
 	return True
 
+def reboot():
+        cmd = "sudo reboot"
+        cmd = shlex.split(cmd)
+        sub = subprocess.Popen(cmd,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        returncode = sub.wait()
+        if returncode != 0:
+                return False
+        return True
+		
 def reverseSSH(port,server,keypath,user='root'):
         cmd = "ssh -NfR %s:localhost:22 %s@%s -i %s"%(port,user,server,keypath)
         cmd = shlex.split(cmd)
