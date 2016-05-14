@@ -1,6 +1,6 @@
 from utils import *
 import constants
-NETWORK_INTERFACE = "eno16777736"
+NETWORK_INTERFACE = "eth0"
 SYSTEM_NAME = "sprobev0.99"
 PLATFORM = getPlatform()
 
@@ -13,6 +13,6 @@ APPLICATION_PATH = getScriptPath()
 
 PROCESS_LIST_PATH = getScriptPath()+'/processlist.json'
 
-REMOTE_REPO_PATH = "sprobe@localhost:~/probe"
+REMOTE_REPO_PATH = "root@166.111.9.229:/opt/hardprobe"
 
 REMOTE_KEY_PATH = getScriptPath()+'/key/probe'

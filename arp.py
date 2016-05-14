@@ -25,7 +25,7 @@ def parseArpInfo(line):
 	return info
 
 def getArpInfo():
-	pipe = subprocess.Popen(shlex.split('arp -a'),stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	pipe = subprocess.Popen(shlex.split('/usr/sbin/arp -a'),stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	stdoutdata,stderrordata = pipe.communicate()
 	if stdoutdata : 
 		lines = stdoutdata.split(os.linesep)
