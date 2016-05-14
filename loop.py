@@ -211,7 +211,7 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 				self.terminate(task['taskRecordId'])
 		elif task.get('type') == 'reverseSSH' :
 			print 'reverseSSH'
-			gitutil.reverseSSH('8001','166.111.9.229','/home/linaro/.ssh/id_rsa')
+			gitutil.reverseSSH(config.REVERSE_SSH_PORT,config.REMOTE_SERVER_IP,config.REMOTE_KEY_PATH)
 		elif task.get('type') == 'killreverseSSH':
 			gitutil.killReverseSSH()
 
