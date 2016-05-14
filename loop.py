@@ -97,7 +97,8 @@ def getSysInfo(id):
 		task_processes = getTaskProcessInfo()
 		topTotal,processs = getProgress()
 		#print topTotal,processs
-		probeInfo = dict(cpu = cpu_percent, memory = mem_usage,ipaddress=ip,netmask=mask,macaddress=mac,arpNeighbors=arpNeighbors,bytesSent=bytes_sent_avg,bytesRecv=bytes_recv_avg,task_processes=task_processes)
+		ipv6address = getIpv6Address()
+		probeInfo = dict(cpu = cpu_percent, memory = mem_usage,ipaddress=ip,ipv6address=ipv6address,toptotal=topTotal,topprocess=processs,netmask=mask,macaddress=mac,arpNeighbors=arpNeighbors,bytesSent=bytes_sent_avg,bytesRecv=bytes_recv_avg,task_processes=task_processes)
 		result = dict(clientId=id,type="heartbeat",time=time.time(),content=probeInfo)
 		#result['currentVersion'] = gitutil.getCurrentVersion(config.APPLICATION_PATH).__str__()
 		result['currentVersion'] = version
