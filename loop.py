@@ -84,10 +84,12 @@ def getSysInfo(id):
 			ip = psutil.net_if_addrs()[NETWORK_INTERFACE][0].address
 			mask = psutil.net_if_addrs()[NETWORK_INTERFACE][0].netmask
 			mac = psutil.net_if_addrs()[NETWORK_INTERFACE][getMacAddressIndex()].address
+			ipv6address = getIpv6Address()
 		else:
 			ip = None
 			mask = None
 			mac = None
+			ipv6address = []
 		bytes_sent = psutil.net_io_counters().bytes_sent
 		bytes_recv = psutil.net_io_counters().bytes_recv
 		bytes_sent_avg = round(float(bytes_sent-lastNetIo["sent"])/HEARTBEAT_INTERVAL/1024,2) if bytes_sent-lastNetIo["sent"] > 0 else 0  #Kbytes/s
@@ -96,8 +98,6 @@ def getSysInfo(id):
 		lastNetIo["recv"] = bytes_recv
 		task_processes = getTaskProcessInfo()
 		topTotal,processs = getProgress()
-		#print topTotal,processs
-		ipv6address = getIpv6Address()
 		probeInfo = dict(cpu = cpu_percent, memory = mem_usage,ipaddress=ip,ipv6address=ipv6address,toptotal=topTotal,topprocess=processs,netmask=mask,macaddress=mac,arpNeighbors=arpNeighbors,bytesSent=bytes_sent_avg,bytesRecv=bytes_recv_avg,task_processes=task_processes)
 		result = dict(clientId=id,type="heartbeat",time=time.time(),content=probeInfo)
 		#result['currentVersion'] = gitutil.getCurrentVersion(config.APPLICATION_PATH).__str__()
