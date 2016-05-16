@@ -13,6 +13,20 @@
 			"rtt":"min/avg.+ = [0-9]+[.][0-9]+/([0-9]+[.][0-9]+)"		
 		}
 	},
+	"ping6":
+	{
+		"cmd":"ping6",
+		"options":
+		{
+			"count":{"type":"int","required":true,"default":5,"option":"-c"},
+			"size" :{"type":"int","required":false,"default":45,"option":"-s"}
+		},
+		"valueExtractor":
+		{
+			"packet loss":"([0-9]+)% packet loss",
+			"rtt":"min/avg.+ = [0-9]+[.][0-9]+/([0-9]+[.][0-9]+)"		
+		}
+	},
 	"iperf-s":
 	{
 		"cmd":"iperf",
