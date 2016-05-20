@@ -99,7 +99,7 @@ def getSysInfo(id):
 		lastNetIo["recv"] = bytes_recv
 		task_processes = getTaskProcessInfo()
 		topTotal,processs = getProgress()
-		probeInfo = dict(cpu = cpu_percent, memory = mem_usage,ipaddress=ip,ipv6address=ipv6address,toptotal=topTotal,topprocess=processs,license_key=license_key,netmask=mask,macaddress=mac,arpNeighbors=arpNeighbors,bytesSent=bytes_sent_avg,bytesRecv=bytes_recv_avg,task_processes=task_processes)
+		probeInfo = dict(cpu = cpu_percent, memory = mem_usage,ipaddress=ip,device_type = 'hard',ipv6address=ipv6address,toptotal=topTotal,topprocess=processs,license_key=license_key,netmask=mask,macaddress=mac,arpNeighbors=arpNeighbors,bytesSent=bytes_sent_avg,bytesRecv=bytes_recv_avg,task_processes=task_processes)
 		result = dict(clientId=id,type="heartbeat",time=time.time(),content=probeInfo)
 		#result['currentVersion'] = gitutil.getCurrentVersion(config.APPLICATION_PATH).__str__()
 		result['currentVersion'] = version
