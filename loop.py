@@ -41,6 +41,7 @@ def sendInfoToPipe(info):
 		print 'no pipe'
 
 def executeTask(task):
+	#print 'executeTask',task
 	taskHandler = CmdTask(os.path.join(os.path.dirname(__file__),'optypes.json'))
 	if task['taskRecordId'] not in runningTask:
 		runningTask[task['taskRecordId']] = {}
@@ -55,7 +56,6 @@ def executeTask(task):
 	else:
 		timeout = 20
 	result = taskHandler.run(optype,params,timeout)
-	print result
 	return result
 
 def executeTraceroute(result):
@@ -116,6 +116,7 @@ def getIpv6Address():
 	return ipv6
 		
 def getProgress():
+	return '',''
 	cmd = 'top -bn 1'
 	cmd = shlex.split(cmd.strip())
 	pipe = subprocess.Popen(cmd,stdin = subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
@@ -181,7 +182,6 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 
 	def onMessage(self,payload,isBinary):
 		task = json.loads(payload)
-		print task
 		if task.get('type') == 'yourId':
 			if task['content'] : 
 				self.id = task['content']['id']
@@ -201,7 +201,6 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 			#sendInfoToPipe(task)
 			gitutil.reboot()
 		elif 'optype' in task: 
-			print task
 			d = threads.deferToThread(executeTask,task)
 			# d = defer.execute(executeTask,task)
 			d.addCallback(self.callBack)
@@ -236,7 +235,7 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 		# d = threads.deferToThread(getSysInfo,self.id,self.hostAddr)
 		# d.addCallback(self.callBack)
 		result = getSysInfo(self.id)
-		print result
+		#print result
 		self.sendMessage(json.dumps(result))
 		reactor.callLater(HEARTBEAT_INTERVAL,self.sendHeartBeat)
 

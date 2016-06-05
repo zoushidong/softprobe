@@ -51,6 +51,7 @@ class CmdTask:
 		"""
 		run the task 
 		"""
+		print 'run task:',params
 		if optype in self.optypes:
 			self.clientId = params.get('clientId')
 			self.taskId = params.get('taskId')
@@ -62,7 +63,7 @@ class CmdTask:
 			result['sched_type'] = params['sched_type']
 			result['taskRecordId'] = params.get('taskRecordId')
 			result['jobId'] = self.jobId
-			result['threshold'] = params.get('threshold')
+			result['interval'] = params.get('interval')
 			result['type'] = params.get('type')
 			result['timeout'] = timeout
 			if 'rawdestination' in params:
@@ -73,6 +74,7 @@ class CmdTask:
 				callback(result)
 			return result 
 		else : 
+			print 'not in optype'
 			return self._error(optype,"Illegal operation type")
 
 
