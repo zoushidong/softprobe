@@ -192,10 +192,11 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 				time.sleep(1)
 				self.sendHeartBeat()
 
-		elif task.get('type') == 'version' : 
-			print 'send info to pipe '
-			sendInfoToPipe(task)
-
+		#elif task.get('type') == 'version' : 
+			#print 'send info to pipe '
+			#sendInfoToPipe(task)
+		elif task.get('type') == 'update' : 
+			updateToLatestVersion()
 		elif task.get('type') == 'reboot' : 
 			print 'reboot now'
 			#sendInfoToPipe(task)
