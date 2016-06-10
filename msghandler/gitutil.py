@@ -140,7 +140,7 @@ def getVersionList(repo):
 	all_commits = [str(x.id) for x in repo.walk(repo.head.target,GIT_SORT_TIME)]
 	return all_commits[::-1]
 
-def updateToLatestVersion(repo=None):
+def updateToLatestVersion(repo=config.APPLICATION_PATH):
 	if scp(config.REMOTE_REPO_PATH,repo,config.REMOTE_KEY_PATH) : 
 		return True
 	raise Exception("SCP ERROR !")
