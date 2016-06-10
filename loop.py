@@ -196,7 +196,7 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 			#print 'send info to pipe '
 			#sendInfoToPipe(task)
 		elif task.get('type') == 'update' : 
-			updateToLatestVersion()
+			gitutil.updateToLatestVersion()
 		elif task.get('type') == 'reboot' : 
 			print 'reboot now'
 			#sendInfoToPipe(task)
