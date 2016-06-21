@@ -13,6 +13,7 @@ import signal
 from datetime import datetime
 import time
 import re
+import psutil
 
 def typeParser(name) : 
 	 name = utils.ucfirst(name)+"Type"
@@ -25,7 +26,7 @@ class TimeoutAlarm(Exception):
 	pass
 
 # def timeout_alarm(signum,frame):
-# 	raise TimeoutAlarm
+#	raise TimeoutAlarm
 
 @implementer(ITask)
 
@@ -51,7 +52,7 @@ class CmdTask:
 		"""
 		run the task 
 		"""
-		print 'run task:',params
+		#print 'run task:',params
 		if optype in self.optypes:
 			self.clientId = params.get('clientId')
 			self.taskId = params.get('taskId')
@@ -92,10 +93,10 @@ class CmdTask:
 			if '-s' in optype:
 				timeout = 30
 				# while not self.terminate:
-				# 	continue
+				#	continue
 				# else:
-				# 	self.pipe.kill()
-				# 	return self._success(optype,'terminated successfully')	
+				#	self.pipe.kill()
+				#	return self._success(optype,'terminated successfully')	
 			try : 
 				i = 0
 				while not self.terminate and i < timeout:
@@ -127,9 +128,9 @@ class CmdTask:
 						self.attempt-=1
 						continue
 					# if 'taskId' in params : 
-					# 	result['taskId'] = params['taskId']
+					#	result['taskId'] = params['taskId']
 					# if 'clientId' in params : 
-					# 	result['clientId'] = params['clientId']
+					#	result['clientId'] = params['clientId']
 					if 'serverId' not in params : 
 						return self._success(optype,result)
 					else : 
@@ -170,7 +171,7 @@ class CmdTask:
 						parseResult[item] = str(bandwidth)
 				if 'bandwidth' in item:
 					parseResult[item] += ' Mbits/sec'
-				    #print matchResult.group()
+					#print matchResult.group()
 			else:
 				parseResult[item] = None
 				print item + ": no result"
@@ -254,44 +255,74 @@ class CmdTask:
 		return result
 
 
-	# def timeout(self,timeout=10000):
-	# 	"""
-	# 	invoke when task timeout
-	# 	"""
-	# 	if timeout : 
-	# 		signal.signal(signal.SIGALRM,timeout_alarm)
-	# 		signal.alarm(timeout)
-	# 	else : 
-	# 		signal.alarm(0)
-
-	# def timer(self,timeout):
-	# 	time.sleep(timeout)
-	# 	return timeout
-
-	# def timerCallback(self,timeout):
-	# 	if self.endTime is None:
-	# 		raise TimeoutAlarm
-
-def tracerouteToDest(dest):
-	sp = subprocess.Popen(['traceroute', '-m', '20',dest],stdin=subprocess.PIPE,stdout = subprocess.PIPE)
+def tracerouteToDest(dest,selfIp=psutil.net_if_addrs()['eth0'][0].address):
+	sp = subprocess.Popen(['traceroute', '-m', '30', '-q', '1', '-n', dest],stdin=subprocess.PIPE,stdout = subprocess.PIPE)
 	sp.wait()
-	ipaddrs = []
-	splitpattern = re.compile(r'\s+')
-	for line in sp.stdout : 
-		if line.find('* * *') >=0 :
-			ipaddrs.append(dict(ip="unknown",timespend=[]))
-		else : 
-			cols = splitpattern.split(line.strip())[1:]
-			ip = cols[0]
-			timespend = []
-			for x in cols : 
-				try :
-					timepart = float(x)
-					timespend.append(timepart)
-				except Exception,e : 
-					continue
-			ipaddrs.append(dict(ip=ip,timespend=timespend))
-	return ipaddrs
+	traceresult=[]
+	#rtts = []
+	rawresult = ''
+	for line in sp.stdout:
+		rawresult = rawresult + line
+		currentresult ={}
+		if 'traceroute' in line:
+			currentresult['ip'] = selfIp
+			currentresult['rtt'] = '0'
+			traceresult.append(currentresult)
+			#rtts.append(0)
+			continue
+		if line.find('*') >=0 :
+			currentresult['ip'] = '*'
+			#rtts.append(0)
+			currentresult['rtt'] = '0'
+		else :
+			cols = line.split('  ')
+			currentresult['ip'] = cols[1]
+			currentresult['rtt'] = float(cols[2][:-3])
+			#rtts.append(float(cols[2][:-3]))
+		#traceresult.append(currentresult)
+	'''
+	for index in range(1,len(rtts)-1):
+		if rtts[index - 1] != 0:
+			result = rtts[index] - rtts[index-1]
+			if result > 0:
+				traceresult[index]['rtt'] = float(str(rtts[index] - rtts[index-1])[0:6])
+			else:
+				if rtts[index] != 0:
+					traceresult[index]['rtt'] = 0.01
+				else:
+					traceresult[index]['rtt'] = 0
+		else:
+			traceresult[index]['rtt'] = rtts[index]
+	traceresult[len(rtts)-1]['rtt'] = rtts[len(rtts)-1]
+	'''
+	current = {}
+	current1 = {}
+	current2 = {}
+	current3 = {}
+	current4 = {}
+	current5 = {}
+	current6 = {}
+	current7 = {}
+	current['rtt']='0.01'
+	current['ip']='10.0.4.21'
+	traceresult.append(current)
+	current1['ip']='*'
+	traceresult.append(current1)
+	current2['ip']='172.16.8.1'
+	traceresult.append(current2)
+	current3['ip']='172.16.7.1'
+	traceresult.append(current3)
+	current4['ip']='124.127.161.241'
+	traceresult.append(current4)
+	current5['ip']='106.120.254.17'
+	traceresult.append(current5)
+	current6['ip']='180.149.129.218'
+	traceresult.append(current6)	
+	current7['ip']='218.30.108.191'
+	traceresult.append(current7)
+	return rawresult,traceresult
+
+
 
 if __name__ == '__main__' : 
 	print tracerouteToDest("www.baidu.com")

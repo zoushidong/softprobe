@@ -18,7 +18,8 @@ from threading import Thread
 #import msghandler as gitutil 
 from msghandler import gitutil
 import subprocess
-import constants 
+import constants
+import datetime
 
 
 
@@ -56,12 +57,38 @@ def executeTask(task):
 	else:
 		timeout = 20
 	result = taskHandler.run(optype,params,timeout)
+	if task['optype'] == 'ping':
+		rawresult,traceresult = tracerouteToDest(task['destination'])
+		result['endTime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+		if traceresult:
+			result['trace_result'] = traceresult
+			result['trace_rawresult'] = rawresult
 	return result
 
-def executeTraceroute(result):
-	data = tracerouteToDest(result['destination'])
-	result['tracedata'] = data
-	print result
+def executeTraceroute(task):
+	result = {}
+	result['sched_type'] = task['sched_type']
+	result['optype'] = task['optype']
+	result['taskId'] = task['taskId']
+	result['clientId'] = task['clientId']
+	result['destination'] = task['destination']
+	result['createTime'] = task['createTime']
+	result['startTime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+	result['taskRecordId'] = task.get('taskRecordId')
+	result['jobId'] = task.get('jobId')
+	result['interval'] = task.get('interval')
+	result['type'] = task.get('type')
+	
+	rawresult,traceresult = tracerouteToDest(task['destination'])
+	result['endTime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+	if traceresult:
+		result['status'] = 'success'
+		result['trace_result'] = traceresult
+		result['trace_rawresult'] = rawresult
+	else:
+		result['status'] = 'failed'
+		result['trace_result'] = []
+		result['trace_rawresult'] = ''
 	return result
 
 
@@ -205,6 +232,11 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 			d = threads.deferToThread(executeTask,task)
 			# d = defer.execute(executeTask,task)
 			d.addCallback(self.callBack)
+			
+			#if task['optype'] == 'ping':
+				#print task
+				#d = threads.deferToThread(executeTraceroute,task)
+				#d.addCallback(self.callBack)
 			# d.addErrback(self.errorBack)
 		elif task.get('type') == 'stop':
 			if task.get('taskRecordId'):
@@ -228,7 +260,7 @@ class ProbeWebsocketClientProtocol(WebSocketClientProtocol):
 				del runningTask[result['taskRecordId']][result['taskId']]
 			if not runningTask[result['taskRecordId']]:
 				del runningTask[result['taskRecordId']]
-		# print result
+		print result
 		# self.sendMessage(json.dumps(result))
 		self._whether_error_exists(result)
 
