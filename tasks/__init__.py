@@ -279,7 +279,7 @@ def tracerouteToDest(dest,selfIp=psutil.net_if_addrs()['eth0'][0].address):
 			currentresult['ip'] = cols[1]
 			currentresult['rtt'] = float(cols[2][:-3])
 			#rtts.append(float(cols[2][:-3]))
-		#traceresult.append(currentresult)
+		traceresult.append(currentresult)
 	'''
 	for index in range(1,len(rtts)-1):
 		if rtts[index - 1] != 0:
@@ -295,31 +295,6 @@ def tracerouteToDest(dest,selfIp=psutil.net_if_addrs()['eth0'][0].address):
 			traceresult[index]['rtt'] = rtts[index]
 	traceresult[len(rtts)-1]['rtt'] = rtts[len(rtts)-1]
 	'''
-	current = {}
-	current1 = {}
-	current2 = {}
-	current3 = {}
-	current4 = {}
-	current5 = {}
-	current6 = {}
-	current7 = {}
-	current['rtt']='0.01'
-	current['ip']='10.0.4.21'
-	traceresult.append(current)
-	current1['ip']='*'
-	traceresult.append(current1)
-	current2['ip']='172.16.8.1'
-	traceresult.append(current2)
-	current3['ip']='172.16.7.1'
-	traceresult.append(current3)
-	current4['ip']='124.127.161.241'
-	traceresult.append(current4)
-	current5['ip']='106.120.254.17'
-	traceresult.append(current5)
-	current6['ip']='180.149.129.218'
-	traceresult.append(current6)	
-	current7['ip']='218.30.108.191'
-	traceresult.append(current7)
 	return rawresult,traceresult
 
 

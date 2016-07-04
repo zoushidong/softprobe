@@ -1,11 +1,12 @@
 import sys,os
-from pygit2 import * 
 import shlex
 import subprocess
 import types
-import pygit2
 import os.path
 import config
+'''
+import pygit2
+from pygit2 import * 
 
 def credentials(self, url, username_from_url, allowed_types):
 	pri_dir = sys.path[0]+'/key/probe'
@@ -41,9 +42,9 @@ def getCurrentVersion(repo):
 
 @repo
 def revert(repo):
-	'''
+	"""
 	revert to last commit
-	'''
+	"""
 	versions = getVersionList(repo)
 	pre_commit_id = None
 	for idx in xrange(len(versions)) : 
@@ -88,6 +89,27 @@ def pull(repo, remote_name='origin'):
             else:
                 raise AssertionError('Unknown merge analysis result')
 
+
+
+@repo
+def changeToVersion(repo,oid):
+	repo.reset(oid,GIT_RESET_HARD)
+
+@repo
+def getVersionList(repo):
+	"""
+		return the list of commit object 
+	"""
+	all_commits = [str(x.id) for x in repo.walk(repo.head.target,GIT_SORT_TIME)]
+	return all_commits[::-1]
+'''
+
+
+def updateToLatestVersion(repo=config.APPLICATION_PATH):
+	if scp(config.REMOTE_REPO_PATH,repo,config.REMOTE_KEY_PATH) : 
+		return True
+	raise Exception("SCP ERROR !")
+
 def scp(remote,dest,keypath) : 
 	dirname = os.path.dirname(dest)
 	cmd = "scp -i %s -r %s %s"%(keypath,remote,dirname)
@@ -127,20 +149,3 @@ def killReverseSSH():
         if returncode != 0:
                 return False
         return True
-
-@repo
-def changeToVersion(repo,oid):
-	repo.reset(oid,GIT_RESET_HARD)
-
-@repo
-def getVersionList(repo):
-	'''
-		return the list of commit object 
-	'''
-	all_commits = [str(x.id) for x in repo.walk(repo.head.target,GIT_SORT_TIME)]
-	return all_commits[::-1]
-
-def updateToLatestVersion(repo=config.APPLICATION_PATH):
-	if scp(config.REMOTE_REPO_PATH,repo,config.REMOTE_KEY_PATH) : 
-		return True
-	raise Exception("SCP ERROR !")
