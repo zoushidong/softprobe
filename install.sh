@@ -21,7 +21,7 @@ esac
 cd $probeSource
 git clone https://github.com/zoushidong/softprobe.git
 source bin/activate
-apt-get install python-dev
+echo y > apt-get install python-dev
 apt-get install libffi-dev
 cd softprobe
 pip install -r requirement.txt
