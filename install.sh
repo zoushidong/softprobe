@@ -1,5 +1,6 @@
 installPath='/opt'
 probeSource='/opt/virtualenv'
+cd /opt
 if [ ! -x "$probeSource" ] ; then
 pipInstallVenv=`pip install virtualenv`
 case "$pipInstallVenv"
